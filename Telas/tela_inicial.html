@@ -25,7 +25,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Página inicial</a>
+              <a class="nav-link" href="tela_inicial.html">Página inicial</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -37,7 +37,7 @@
               </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Saber mais - FAQ</a>
+                <a class="nav-link" href="tela_faq.html">Saber mais - FAQ</a>
               </li>
           </ul>
           <form class="d-flex ms-auto my-2 my-lg-0 me-3">
@@ -70,16 +70,16 @@
                 <h3>Top 10 emissores de CO2 em 2020 (Climate Watch):</h3>
                 <div class="highlight-background">
                     <ul class="list-unstyled fs-4">
-                        <li><a class="hover" href="#" class="text-info">1. China</a></li>
-                        <li><a class="hover" href="#" class="text-info">2. Estados Unidos</a></li>
-                        <li><a class="hover" href="#" class="text-info">3. Índia</a></li>
-                        <li><a class="hover" href="#" class="text-info">4. Rússia</a></li>
-                        <li><a class="hover" href="#" class="text-info">5. Indonésia</a></li>
-                        <li><a class="hover" href="#" class="text-info">6. Japão</a></li>
-                        <li><a class="hover" href="#" class="text-info">7. Brasil</a></li>
-                        <li><a class="hover" href="#" class="text-info">8. Alemanha</a></li>
-                        <li><a class="hover" href="#" class="text-info">9. República Democrática do Congo</a></li>
-                        <li><a class="hover" href="#" class="text-info">10. Canadá</a></li>
+                        <li><a id ="China" class="hover" href="#" class="text-info">1. China</a></li>
+                        <li><a id ="Estados Unidos"class="hover" href="#" class="text-info">2. Estados Unidos</a></li>
+                        <li><a id ="Índia"class="hover" href="#" class="text-info">3. Índia</a></li>
+                        <li><a id ="Rússia"class="hover" href="#" class="text-info">4. Rússia</a></li>
+                        <li><a id ="Indonésia"class="hover" href="#" class="text-info">5. Indonésia</a></li>
+                        <li><a id ="Japão"class="hover" href="#" class="text-info">6. Japão</a></li>
+                        <li><a id ="Brasil"class="hover" href="#" class="text-info">7. Brasil</a></li>
+                        <li><a id ="Alemanha"class="hover" href="#" class="text-info">8. Alemanha</a></li>
+                        <li><a id ="República Democrática do Congo"class="hover" href="#" class="text-info">9. República Democrática do Congo</a></li>
+                        <li><a id ="Canadá"class="hover" href="#" class="text-info">10. Canadá</a></li>
                     </ul>
                 </div>
             </div>
@@ -92,6 +92,21 @@
       var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
           return new bootstrap.Tooltip(tooltipTriggerEl)
       })
+      // Função para redirecionar o usuário com base no país escolhido
+      function exibirDadosPais(pais) {
+        window.location.href = `tela_gráficos.html?pais=${encodeURIComponent(pais)}`;
+      }
+      // Adiciona evento de clique a cada link de país
+      document.getElementById("China").addEventListener("click", function() { exibirDadosPais("China"); });
+      document.getElementById("Estados Unidos").addEventListener("click", function() { exibirDadosPais("Estados Unidos"); });
+      document.getElementById("Índia").addEventListener("click", function() { exibirDadosPais("Índia"); });
+      document.getElementById("Rússia").addEventListener("click", function() { exibirDadosPais("Rússia"); });
+      document.getElementById("Indonésia").addEventListener("click", function() { exibirDadosPais("Indonésia"); });
+      document.getElementById("Japão").addEventListener("click", function() { exibirDadosPais("Japão"); });
+      document.getElementById("Brasil").addEventListener("click", function() { exibirDadosPais("Brasil"); });
+      document.getElementById("Alemanha").addEventListener("click", function() { exibirDadosPais("Alemanha"); });
+      document.getElementById("República Democrática do Congo").addEventListener("click", function() { exibirDadosPais("República Democrática do Congo"); });
+      document.getElementById("Canadá").addEventListener("click", function() { exibirDadosPais("Canadá"); });
     </script>
 </body>
 </html>
