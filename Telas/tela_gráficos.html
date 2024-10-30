@@ -9,79 +9,208 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+    .grafico-botao .btn.selecionado {
+    background-color: #333333;
+    color: white;
+    }
+    </style>
     <script>
       // Função para carregar e exibir dados do país
-      var pais_geral = ''
+      var paisGeral = '';
+      var graficoAtual = 'relacao';
+      
+      let dadosCO2; 
+      let dadosPIB; 
+      let dadosRelacao;
+
       function carregarDados() {
           const urlParams = new URLSearchParams(window.location.search);
           const pais = urlParams.get('pais');
-          pais_geral = pais
+          paisGeral = pais;
+
           // Supondo que os arquivos JSON estejam no caminho /dados_paises/{pais}/...
           const caminhoCo2 = `dados_paises/${pais}/co2.json`;
           const caminhoPib = `dados_paises/${pais}/pib.json`;
           const caminhoRelacao = `dados_paises/${pais}/co2-pib.json`;
 
-          // Função para carregar e exibir os gráficos
-          // Exemplo para carregar os dados e montar os gráficos
+          // Carregar e exibir os gráficos
           fetch(caminhoCo2)
               .then(response => response.json())
-              .then(data => {
-                  // Aqui você chama a função para montar o gráfico CO2
-                  desenharGraficoCO2(data);
-              });
+              .then(data => desenharGraficoCO2(data));
 
           fetch(caminhoPib)
               .then(response => response.json())
-              .then(data => {
-                  // Função para montar o gráfico PIB
-                  desenharGraficoPIB(data);
-              });
+              .then(data => desenharGraficoPIB(data));
 
           fetch(caminhoRelacao)
               .then(response => response.json())
-              .then(data => {
-                  // Função para montar o gráfico CO2/PIB
-                  desenharGraficoRelacao(data);
-              });
+              .then(data => desenharGraficoRelacao(data));
+              mostrarGrafico('relacao');
       }
+      function baixarDados(tipo) {
+        let dados;
+        let nomeArquivo;
 
-      function desenharGraficoCO2(data) {
-          const anos = data.map(entry => entry.Ano);
-          const valoresCO2 = data.map(entry => entry.CO2);
+        switch(tipo) {
+            case 'co2':
+                dados = dadosCO2;
+                nomeArquivo = 'dados_co2.json';
+                break;
+            case 'pib':
+                dados = dadosPIB;
+                nomeArquivo = 'dados_pib.json';
+                break;
+            case 'relacao':
+                dados = dadosRelacao;
+                nomeArquivo = 'dados_relacao.json';
+                break;
+            default:
+                return;
+        }
 
-          const ctx = document.getElementById('graficoCO2').getContext('2d');
-          new Chart(ctx, {
-              type: 'line',
-              data: {
-                  labels: anos,
-                  datasets: [{
-                      label: 'Emissões de CO2 (milhões de toneladas)',
-                      data: valoresCO2,
-                      borderColor: '#f44336',
-                      backgroundColor: 'rgba(244, 67, 54, 0.2)',
-                      borderWidth: 2,
-                      fill: true
-                  }]
-              },
-              options: {
-                  responsive: true,
-                  plugins: {
-                      legend: { display: true, position: 'top' },
-                      title: { display: true, text: `Emissões de CO2 por Ano - ${pais_geral}` }
-                  },
-                  scales: {
-                      x: { title: { display: true, text: 'Ano' }},
-                      y: { title: { display: true, text: 'CO2 (milhões de toneladas)' }}
-                  }
-              }
-          });
-      }
-      function desenharGraficoPIB(data) {
-          // Código para desenhar o gráfico usando os dados JSON
-      }
-      function desenharGraficoRelacao(data) {
-          // Código para desenhar o gráfico usando os dados JSON
-      }
+        // Exibe uma caixa de confirmação
+        const confirmacao = confirm(`Você tem certeza que deseja baixar os dados ${nomeArquivo} de ${paisGeral}?`);
+
+        // Se o usuário confirmar, procede com o download
+        if (confirmacao) {
+            const jsonString = JSON.stringify(dados);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = nomeArquivo;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    }
+
+    function desenharGraficoCO2(data) {
+        const anos = data.map(entry => entry.Ano);
+        const valoresCO2 = data.map(entry => entry.CO2);
+
+        const ctx = document.getElementById('graficoCO2').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: anos,
+                datasets: [{
+                    data: valoresCO2,
+                    borderColor: '#f44336',
+                    backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: `Emissões de CO2 (Milhões de Toneladas) por Ano - ${paisGeral}`, color: '#f0f0f0', font: { size: 30 } },
+                },
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Ano', color: '#f0f0f0', font: { size: 14 }}, 
+                        ticks: { color: '#f0f0f0', font: { size: 14 }},
+                    },
+                    y: { 
+                        title: { display: true, text: 'CO2 (milhões de toneladas)', color: '#f0f0f0',font: { size: 14 }}, 
+                        ticks: { color: '#f0f0f0', font: { size: 14 }},
+                    }
+                }
+            }
+        });
+    }
+
+    function desenharGraficoPIB(data) {
+        const anos = data.map(entry => entry.Ano);
+        const valoresPIB = data.map(entry => entry['PIB Nominal']);
+
+        const ctx = document.getElementById('graficoPIB').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: anos,
+                datasets: [{
+                    data: valoresPIB,
+                    borderColor: '#2196f3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: `PIB (Bilhões de dólares) por Ano - ${paisGeral}`, color: '#f0f0f0', font: { size: 30 } },
+                },
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Ano', color: '#f0f0f0' , font: { size: 14 }},
+                        ticks: { color: '#f0f0f0', font: { size: 14 }} 
+                    },
+                    y: { 
+                        title: { display: true, text: 'PIB (bilhões de dólares)', color: '#f0f0f0', font: { size: 14 }}, 
+                        ticks: { color: '#f0f0f0', font: { size: 14 }} 
+                    }
+                }
+            }
+        });
+    }
+
+    function desenharGraficoRelacao(data) {
+        const anos = data.map(entry => entry.Ano);
+        const valoresRelacao = data.map(entry => entry['CO2/PIB']);
+
+        const ctx = document.getElementById('graficoRelacao').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: anos,
+                datasets: [{
+                    data: valoresRelacao,
+                    borderColor: '#9c27b0',
+                    backgroundColor: 'rgba(156, 39, 176, 0.2)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: `Relação entre CO2 (mg - miligramas) e PIB ($ - Dolar) - ${paisGeral}`, color: '#f0f0f0', font: { size: 30 } } 
+                },
+                scales: {
+                    x: { 
+                        title: { display: true, text: 'Ano', color: '#f0f0f0' ,  font: { size: 14 }}, 
+                        ticks: { color: '#f0f0f0', font: { size: 14 }},
+                    },
+                    y: { 
+                        title: { display: true, text: 'CO2/PIB', color: '#f0f0f0', font: { size: 14 }},
+                        ticks: { color: '#f0f0f0', font: { size: 14 }},
+                    }
+                }
+            }
+        });
+    }
+    function mostrarGrafico(tipo) {
+      document.getElementById('graficoRelacao').style.display = tipo === 'relacao' ? 'block' : 'none';
+      document.getElementById('graficoCO2').style.display = tipo === 'co2' ? 'block' : 'none';
+      document.getElementById('graficoPIB').style.display = tipo === 'pib' ? 'block' : 'none';
+      graficoAtual = tipo
+
+      // Remover a classe 'selecionado' de todos os botões
+      document.querySelectorAll('.grafico-botao .btn').forEach(btn => btn.classList.remove('selecionado'));
+
+      // Adicionar a classe 'selecionado' ao botão clicado
+      const botaoAtivo = document.querySelector(`.grafico-botao .btn[onclick="mostrarGrafico('${tipo}')"]`);
+      if (botaoAtivo) botaoAtivo.classList.add('selecionado');
+    }
   </script>
     <style>
       a:hover {
@@ -121,11 +250,25 @@
           </form>
         </div>
       </nav>
-      <div class="container bg-dark min-vw-100">        
-        <div class="d-flex justify-content-center">
-          <div class="w-50 v-100">
-              <canvas id="graficoCO2"></canvas>
-          </div>
+
+      <div class="container bg-dark min-vw-100 py-5">
+        <div id="grafico-container" class="w-75 mx-auto">
+          <canvas id="graficoRelacao" width="1400" height="700"></canvas>
+          <canvas id="graficoCO2" width="1400" height="700" style="display:none;"></canvas>
+          <canvas id="graficoPIB" width="1400" height="700" style="display:none;"></canvas>
+          
+          <div class="grafico-botao d-flex justify-content-between">
+            <!-- Botões de gráfico com tamanho maior -->
+            <div>
+                <button class="btn btn-primary btn-lg me-2" onclick="mostrarGrafico('relacao')">CO2/PIB</button>
+                <button class="btn btn-primary btn-lg me-2" onclick="mostrarGrafico('co2')">CO2</button>
+                <button class="btn btn-primary btn-lg" onclick="mostrarGrafico('pib')">PIB</button>
+            </div>
+            <!-- Botão de download alinhado à direita -->
+            <button class="btn btn-success btn-lg download-btn" onclick="baixarDados(graficoAtual)" title="Download">
+                <i class="fas fa-download"></i> Download
+            </button>
         </div>
     </div>
 </body>
+</html>
