@@ -34,6 +34,7 @@
     </style>
 </head>
 <body>
+    <script src="scripts_gerais.js"></script>
     <!-- Navbar importada de navbar.html -->
     <script>
       fetch('navbar.html')
@@ -104,60 +105,6 @@
       document.getElementById("Alemanha").addEventListener("click", function() { exibirDadosPais("Alemanha"); });
       document.getElementById("República Democrática do Congo").addEventListener("click", function() { exibirDadosPais("República Democrática do Congo"); });
       document.getElementById("Canadá").addEventListener("click", function() { exibirDadosPais("Canadá"); });
-    
-      const paises = [
-          "China", "Estados Unidos", "Índia", "Rússia", "Indonésia", "Japão", 
-          "Brasil", "Alemanha", "República Democrática do Congo", "Canadá"
-        ];
-
-      function removerAcentos(texto) {
-        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      }
-      function mostrarSugestoes() {
-        const input = document.getElementById("campoBusca");
-        const filtro = input.value.toLowerCase();
-        const sugestoesContainer = document.getElementById("sugestoes");
-        sugestoesContainer.innerHTML = "";
-
-        if (filtro.length === 0) {
-          sugestoesContainer.style.display = "none"; // Oculta o contêiner se o input estiver vazio
-          return;
-        }
-
-        const sugestoesFiltradas = paises.filter(pais => removerAcentos(pais.toLowerCase()).includes(filtro));
-        
-        if (sugestoesFiltradas.length > 0) {
-          sugestoesFiltradas.forEach(pais => {
-            const suggestionDiv = document.createElement("div");
-            suggestionDiv.classList.add("autocomplete-suggestion");
-            suggestionDiv.textContent = pais;
-            suggestionDiv.onclick = () => {
-              input.value = pais;
-              sugestoesContainer.innerHTML = "";
-              sugestoesContainer.style.display = "none"; // Oculta novamente após a seleção
-            };
-            sugestoesContainer.appendChild(suggestionDiv);
-          });
-          sugestoesContainer.style.display = "block"; // Exibe o contêiner se houver sugestões
-        } else {
-          sugestoesContainer.style.display = "none"; // Oculta o contêiner se não houver sugestões
-        }
-    }
-
-      function buscarPais() {
-        
-        const campoBusca = document.getElementById("campoBusca").value.trim();
-        
-        // Verifica se o país está na lista
-        if (paises.includes(campoBusca)) {
-          window.location.href = `tela_gráficos.html?pais=${encodeURIComponent(campoBusca)}`;
-          return false;  // Impede o envio do formulário
-        } else {
-          alert("País não encontrado. Por favor, escolha um dos países da lista.");
-          return false;
-        }
-      }
-      document.getElementById("campoBusca").addEventListener("input", mostrarSugestoes);
     </script>
 </body>
 </html>

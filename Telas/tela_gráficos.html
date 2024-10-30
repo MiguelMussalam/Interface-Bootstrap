@@ -211,8 +211,6 @@
       const botaoAtivo = document.querySelector(`.grafico-botao .btn[onclick="mostrarGrafico('${tipo}')"]`);
       if (botaoAtivo) botaoAtivo.classList.add('selecionado');
     }
-
-
   </script>
     <style>
       a:hover {
@@ -223,15 +221,16 @@
     </style>
 </head>
 <body onload="carregarDados()">
-    <!-- Navbar importada de navbar.html -->
-    <script>
-      fetch('navbar.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('navbar').innerHTML = data;
-        });
-    </script>
-    <div id="navbar"></div>
+  <script src="scripts_gerais.js"></script>
+  <!-- Navbar importada de navbar.html -->
+  <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(data => {
+          document.getElementById('navbar').innerHTML = data;
+      });
+  </script>
+  <div id="navbar"></div>
 
       <div class="container bg-dark min-vw-100 min-vh-100 py-5">
         <div id="grafico-container" class="w-75 mx-auto">
