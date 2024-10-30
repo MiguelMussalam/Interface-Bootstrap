@@ -14,39 +14,36 @@
         text-decoration: underline;
         transition: color 0.2s ease;
       }
+      .autocomplete-suggestions {
+        position: absolute;
+        border: 1px solid #ced4da;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        background-color: white;
+        width: 100%;
+        display: none;
+      }
+      .autocomplete-suggestion {
+        padding: 8px;
+        cursor: pointer;
+      }
+      .autocomplete-suggestion:hover {
+        background-color: #e9ecef;
+      }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-5">
-        <a class="navbar-brand ms-3" href="#">CO2/PIB</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="tela_inicial.html">Página inicial</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Linguagem
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Português Brasileiro</a>
-                <a class="dropdown-item" href="#">English</a>
-              </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="tela_faq.html">Saber mais - FAQ</a>
-              </li>
-          </ul>
-          <form class="d-flex ms-auto my-2 my-lg-0 me-3">
-            <input class="form-control me-2" type="search" placeholder="Buscar país..." aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
-          </form>
-        </div>
-      </nav>
-  
+    <!-- Navbar importada de navbar.html -->
+    <script>
+      fetch('navbar.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbar').innerHTML = data;
+        });
+    </script>
+    <div id="navbar"></div>
+
     <!-- Container Principal -->
     <div class="container bg-dark text-light p-4 min-vh-100 min-vw-100 d-flex flex-column">
         <div class="text-center mb-4 mt-4">
@@ -107,6 +104,60 @@
       document.getElementById("Alemanha").addEventListener("click", function() { exibirDadosPais("Alemanha"); });
       document.getElementById("República Democrática do Congo").addEventListener("click", function() { exibirDadosPais("República Democrática do Congo"); });
       document.getElementById("Canadá").addEventListener("click", function() { exibirDadosPais("Canadá"); });
+    
+      const paises = [
+          "China", "Estados Unidos", "Índia", "Rússia", "Indonésia", "Japão", 
+          "Brasil", "Alemanha", "República Democrática do Congo", "Canadá"
+        ];
+
+      function removerAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      }
+      function mostrarSugestoes() {
+        const input = document.getElementById("campoBusca");
+        const filtro = input.value.toLowerCase();
+        const sugestoesContainer = document.getElementById("sugestoes");
+        sugestoesContainer.innerHTML = "";
+
+        if (filtro.length === 0) {
+          sugestoesContainer.style.display = "none"; // Oculta o contêiner se o input estiver vazio
+          return;
+        }
+
+        const sugestoesFiltradas = paises.filter(pais => removerAcentos(pais.toLowerCase()).includes(filtro));
+        
+        if (sugestoesFiltradas.length > 0) {
+          sugestoesFiltradas.forEach(pais => {
+            const suggestionDiv = document.createElement("div");
+            suggestionDiv.classList.add("autocomplete-suggestion");
+            suggestionDiv.textContent = pais;
+            suggestionDiv.onclick = () => {
+              input.value = pais;
+              sugestoesContainer.innerHTML = "";
+              sugestoesContainer.style.display = "none"; // Oculta novamente após a seleção
+            };
+            sugestoesContainer.appendChild(suggestionDiv);
+          });
+          sugestoesContainer.style.display = "block"; // Exibe o contêiner se houver sugestões
+        } else {
+          sugestoesContainer.style.display = "none"; // Oculta o contêiner se não houver sugestões
+        }
+    }
+
+      function buscarPais() {
+        
+        const campoBusca = document.getElementById("campoBusca").value.trim();
+        
+        // Verifica se o país está na lista
+        if (paises.includes(campoBusca)) {
+          window.location.href = `tela_gráficos.html?pais=${encodeURIComponent(campoBusca)}`;
+          return false;  // Impede o envio do formulário
+        } else {
+          alert("País não encontrado. Por favor, escolha um dos países da lista.");
+          return false;
+        }
+      }
+      document.getElementById("campoBusca").addEventListener("input", mostrarSugestoes);
     </script>
 </body>
 </html>

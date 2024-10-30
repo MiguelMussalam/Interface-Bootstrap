@@ -211,6 +211,8 @@
       const botaoAtivo = document.querySelector(`.grafico-botao .btn[onclick="mostrarGrafico('${tipo}')"]`);
       if (botaoAtivo) botaoAtivo.classList.add('selecionado');
     }
+
+
   </script>
     <style>
       a:hover {
@@ -221,37 +223,17 @@
     </style>
 </head>
 <body onload="carregarDados()">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-5">
-        <a class="navbar-brand ms-3" href="#">CO2/PIB</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="tela_inicial.html">Página inicial</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Linguagem
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Português Brasileiro</a>
-                <a class="dropdown-item" href="#">English</a>
-              </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="tela_faq.html">Saber mais - FAQ</a>
-              </li>
-          </ul>
-          <form class="d-flex ms-auto my-2 my-lg-0 me-3">
-            <input class="form-control me-2" type="search" placeholder="Buscar país..." aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Pesquisar</button>
-          </form>
-        </div>
-      </nav>
+    <!-- Navbar importada de navbar.html -->
+    <script>
+      fetch('navbar.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbar').innerHTML = data;
+        });
+    </script>
+    <div id="navbar"></div>
 
-      <div class="container bg-dark min-vw-100 py-5">
+      <div class="container bg-dark min-vw-100 min-vh-100 py-5">
         <div id="grafico-container" class="w-75 mx-auto">
           <canvas id="graficoRelacao" width="1400" height="700"></canvas>
           <canvas id="graficoCO2" width="1400" height="700" style="display:none;"></canvas>
